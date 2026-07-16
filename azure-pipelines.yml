@@ -1,0 +1,25 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+
+- task: SonarCloudPrepare@1
+
+- script: |
+    docker build -t backend:latest backend
+  displayName: Build Backend
+
+- script: |
+    docker build -t frontend:latest frontend
+  displayName: Build Frontend
+
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'azure-service-connection'
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+       az acr login --name poc16acr12345
